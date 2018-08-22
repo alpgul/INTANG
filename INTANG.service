@@ -1,0 +1,15 @@
+
+[Unit]
+Description=INTANG
+After=multi-user.target
+
+[Service]
+WorkingDirectory=/opt/INTANG/
+Type=forking
+ExecStart=/bin/bash INTANG.sh start
+ExecStop=/bin/bash INTANG.sh stop
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target
+
