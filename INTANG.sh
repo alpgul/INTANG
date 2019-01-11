@@ -26,6 +26,7 @@ service=INTANG
       echo  "Starting server..$(dirname "$0")"
       sudo $dir/bin/intangd 10 || echo "intangd not found. Maybe run make first." &
       get_pid
+      iptables -F
       iptables -A INPUT -p icmp -j DROP
 iptables -A FORWARD -p tcp -m tcp --sport 80 --tcp-flags RST RST -j NFQUEUE --queue-num 1
 iptables -A FORWARD -p tcp -m tcp --sport 80 --tcp-flags SYN,ACK SYN,ACK -j NFQUEUE --queue-num 1
