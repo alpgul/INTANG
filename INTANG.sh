@@ -38,7 +38,7 @@ iptables -A FORWARD -p tcp -m tcp --dport 80 --tcp-flags SYN,ACK SYN -m mark ! -
 iptables -A FORWARD -p tcp -m tcp --dport 80 --tcp-flags SYN,RST,ACK ACK -m mark ! --mark 0x9 -m length --length 0:80 -j NFQUEUE --queue-num 1
 iptables -A FORWARD -p tcp -m tcp --dport 80 --tcp-flags SYN,RST,ACK ACK -m mark ! --mark 0x9 -m u32 --u32 "0x0>>0x16&0x3c@0xc>>0x1a&0x3c@0x0=0x47455420" -j NFQUEUE --queue-num 1
 iptables -A FORWARD -p tcp -m tcp --dport 80 --tcp-flags SYN,RST,ACK ACK -m mark ! --mark 0x9 -m u32 --u32 "0x0>>0x16&0x3c@0xc>>0x1a&0x3c@0x0=0x504f5354" -j NFQUEUE --queue-num 1
-iptables -A FORWARD -p tcp -m tcp --dport 443 --tcp-flags SYN,ACK SYN -m mark ! --mark 0x9 -j NFQUEUE --queue-num 1
+#iptables -A FORWARD -p tcp -m tcp --dport 443 --tcp-flags SYN,ACK SYN -m mark ! --mark 0x9 -j NFQUEUE --queue-num 1
 iptables -A FORWARD -p tcp -m tcp --dport 443 --tcp-flags SYN,RST,ACK ACK -m mark ! --mark 0x9 -m length --length 0:80 -j NFQUEUE --queue-num 1
 iptables -A FORWARD -p tcp -m tcp --dport 443 --tcp-flags SYN,RST,ACK ACK -m mark ! --mark 0x9 -m u32 --u32 "0x0>>0x16&0x3c@0xc>>0x1a&0x3c@0x0&0xffff0000=0x16030000" -j NFQUEUE --queue-num 1
       echo "Done. PID=$PID"
