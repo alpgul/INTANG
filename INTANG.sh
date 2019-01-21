@@ -36,19 +36,20 @@ iptables -X
 iptables -t raw -F 
 iptables -t raw -X
 iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE
-iptables -A FORWARD -p tcp -m tcp --sport 80 --tcp-flags RST RST -j NFQUEUE --queue-num 1
-iptables -A FORWARD -p tcp -m tcp --sport 80 --tcp-flags SYN,ACK SYN,ACK -j NFQUEUE --queue-num 1
-iptables -A FORWARD -p tcp -m tcp --sport 80 --tcp-flags SYN,RST,ACK ACK -m u32 --u32 "0x0>>0x16&0x3c@0xc>>0x1a&0x3c@0x0=0x48545450" -j NFQUEUE --queue-num 1
-iptables -A FORWARD -p tcp -m tcp --sport 443 --tcp-flags RST RST -j NFQUEUE --queue-num 1
-iptables -A FORWARD -p tcp -m tcp --sport 443 --tcp-flags SYN,ACK SYN,ACK -j NFQUEUE --queue-num 1
-iptables -A FORWARD -p tcp -m tcp --sport 443 --tcp-flags SYN,RST,ACK ACK -m u32 --u32 "0x0>>0x16&0x3c@0xc>>0x1a&0x3c@0x0&0xffff0000=0x16030000" -j NFQUEUE --queue-num 1
-iptables -A FORWARD -p tcp -m tcp --dport 80 --tcp-flags SYN,ACK SYN -m mark ! --mark 0x9 -j NFQUEUE --queue-num 1
-iptables -A FORWARD -p tcp -m tcp --dport 80 --tcp-flags SYN,RST,ACK ACK -m mark ! --mark 0x9 -m length --length 0:80 -j NFQUEUE --queue-num 1
-iptables -A FORWARD -p tcp -m tcp --dport 80 --tcp-flags SYN,RST,ACK ACK -m mark ! --mark 0x9 -m u32 --u32 "0x0>>0x16&0x3c@0xc>>0x1a&0x3c@0x0=0x47455420" -j NFQUEUE --queue-num 1
-iptables -A FORWARD -p tcp -m tcp --dport 80 --tcp-flags SYN,RST,ACK ACK -m mark ! --mark 0x9 -m u32 --u32 "0x0>>0x16&0x3c@0xc>>0x1a&0x3c@0x0=0x504f5354" -j NFQUEUE --queue-num 1
-iptables -A FORWARD -p tcp -m tcp --dport 443 --tcp-flags SYN,ACK SYN -m mark ! --mark 0x9 -j NFQUEUE --queue-num 1
-#iptables -A FORWARD -p tcp -m tcp --dport 443 --tcp-flags SYN,RST,ACK ACK -m mark ! --mark 0x9 -m length --length 0:80 -j NFQUEUE --queue-num 1
-iptables -A FORWARD -p tcp -m tcp --dport 443 --tcp-flags SYN,RST,ACK ACK -m mark ! --mark 0x9 -m u32 --u32 "0x0>>0x16&0x3c@0xc>>0x1a&0x3c@0x0&0xffff0000=0x16030000" -j NFQUEUE --queue-num 1
+iptables -t nat -I PREROUTING -p icmp -j DROP
+iptables -t raw -I PREROUTING -p tcp -m tcp --sport 80 --tcp-flags RST RST -j NFQUEUE --queue-num 1
+iptables -t raw -I PREROUTING -p tcp -m tcp --sport 80 --tcp-flags SYN,ACK SYN,ACK -j NFQUEUE --queue-num 1
+iptables -t mangle -I PREROUTING -p tcp -m tcp --sport 80 --tcp-flags SYN,RST,ACK ACK -m u32 --u32 "0x0>>0x16&0x3c@0xc>>0x1a&0x3c@0x0=0x48545450" -j NFQUEUE --queue-num 1
+iptables -t raw -I PREROUTING -p tcp -m tcp --sport 443 --tcp-flags RST RST -j NFQUEUE --queue-num 1
+iptables -t raw -I PREROUTING -p tcp -m tcp --sport 443 --tcp-flags SYN,ACK SYN,ACK -j NFQUEUE --queue-num 1
+iptables -t mangle -I PREROUTING -p tcp -m tcp --sport 443 --tcp-flags SYN,RST,ACK ACK -m u32 --u32 "0x0>>0x16&0x3c@0xc>>0x1a&0x3c@0x0&0xffff0000=0x16030000" -j NFQUEUE --queue-num 1
+iptables -t mangle -I POSTROUTING  -p tcp -m tcp --dport 80 --tcp-flags SYN,ACK SYN -m mark ! --mark 0x9 -j NFQUEUE --queue-num 1
+iptables -t mangle -I POSTROUTING  -p tcp -m tcp --dport 80 --tcp-flags SYN,RST,ACK ACK -m mark ! --mark 0x9 -m length --length 0:80 -j NFQUEUE --queue-num 1
+iptables -t mangle -I POSTROUTING  -p tcp -m tcp --dport 80 --tcp-flags SYN,RST,ACK ACK -m mark ! --mark 0x9 -m u32 --u32 "0x0>>0x16&0x3c@0xc>>0x1a&0x3c@0x0=0x47455420" -j NFQUEUE --queue-num 1
+iptables -t mangle -I POSTROUTING  -p tcp -m tcp --dport 80 --tcp-flags SYN,RST,ACK ACK -m mark ! --mark 0x9 -m u32 --u32 "0x0>>0x16&0x3c@0xc>>0x1a&0x3c@0x0=0x504f5354" -j NFQUEUE --queue-num 1
+iptables -t mangle -I POSTROUTING  -p tcp -m tcp --dport 443 --tcp-flags SYN,ACK SYN -m mark ! --mark 0x9 -j NFQUEUE --queue-num 1
+iptables -t mangle -I POSTROUTING  -p tcp -m tcp --dport 443 --tcp-flags SYN,RST,ACK ACK -m mark ! --mark 0x9 -m length --length 0:80 -j NFQUEUE --queue-num 1
+iptables -t mangle -I POSTROUTING  -p tcp -m tcp --dport 443 --tcp-flags SYN,RST,ACK ACK -m mark ! --mark 0x9 -m u32 --u32 "0x0>>0x16&0x3c@0xc>>0x1a&0x3c@0x0&0xffff0000=0x16030000" -j NFQUEUE --queue-num 1
       echo "Done. PID=$PID"
    else
       echo "server is already running, PID=$PID"
