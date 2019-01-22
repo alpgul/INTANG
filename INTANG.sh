@@ -98,3 +98,4 @@ case "$1" in
    *)
       echo "Usage: $0 {start|stop|restart|status}"
 esac
+exit 0 
