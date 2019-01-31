@@ -13,8 +13,17 @@ service=INTANG
       exit 1
    else
       echo -n "Stopping server.."
-      kill -9 $PID
-      sleep 1
+      iptables -P INPUT ACCEPT
+iptables -P FORWARD ACCEPT
+iptables -P OUTPUT ACCEPT
+iptables -t nat -F
+iptables -t mangle -F
+iptables -F
+iptables -X
+iptables -t raw -F 
+iptables -t raw -X
+iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE
+      exit 0
       echo ".. Done."
    fi
 }
@@ -25,7 +34,8 @@ service=INTANG
    if [ $(pidof $service | wc -w) ]; then
       echo  "Starting server..$(dirname "$0")"
       sudo $dir/bin/intangd 10 || echo "intangd not found. Maybe run make first." &
-      get_pid
+      get_pid      
+      sleep 3
 iptables -P INPUT ACCEPT
 iptables -P FORWARD ACCEPT
 iptables -P OUTPUT ACCEPT
@@ -51,7 +61,6 @@ iptables -t mangle -I POSTROUTING  -p tcp -m tcp --dport 443 --tcp-flags SYN,ACK
 iptables -t mangle -I POSTROUTING  -p tcp -m tcp --dport 443 --tcp-flags SYN,RST,ACK ACK -m mark ! --mark 0x9 -m length --length 0:80 -j NFQUEUE --queue-num 1
 iptables -t mangle -I POSTROUTING  -p tcp -m tcp --dport 443 --tcp-flags SYN,RST,ACK ACK -m mark ! --mark 0x9 -m u32 --u32 "0x0>>0x16&0x3c@0xc>>0x1a&0x3c@0x0&0xffff0000=0x16030000" -j NFQUEUE --queue-num 1
       echo "Done. PID=$PID"
-      sleep 3
 iptables -F
 
    else
