@@ -258,7 +258,7 @@ int add_iptables_rules()
         sprintf(cmd, "iptables -t mangle -I POSTROUTING -p tcp --dport 80 --tcp-flags SYN,ACK SYN -m mark ! --mark %d -j NFQUEUE --queue-num %d", MARK, NF_QUEUE_NUM);
         system(cmd);
         // monitor incoming SYN-ACK
-        sprintf(cmd, "iptables -t raw -p tcp --sport 80 --tcp-flags SYN,ACK SYN,ACK -j NFQUEUE --queue-num %d", NF_QUEUE_NUM);
+        sprintf(cmd, "iptables -t raw -I PREROUTING -p tcp --sport 80 --tcp-flags SYN,ACK SYN,ACK -j NFQUEUE --queue-num %d", NF_QUEUE_NUM);
         system(cmd);
         // intercept outgoing ACK
         sprintf(cmd, "iptables -t mangle -I POSTROUTING -p tcp --dport 80 --tcp-flags SYN,ACK,RST ACK -m mark ! --mark %d -m length --length 0:80 -j NFQUEUE --queue-num %d", MARK, NF_QUEUE_NUM);
@@ -344,7 +344,7 @@ int add_iptables_rules()
         sprintf(cmd, "iptables -t mangle -I POSTROUTING -p tcp --dport %d --tcp-flags SYN,ACK SYN -m mark ! --mark %d -j NFQUEUE --queue-num %d", opt_tor_port, MARK, NF_QUEUE_NUM);
         system(cmd);
         // monitor incoming SYN-ACK
-        sprintf(cmd, "iptables -t raw -p tcp --sport %d --tcp-flags SYN,ACK SYN,ACK -j NFQUEUE --queue-num %d", opt_tor_port, NF_QUEUE_NUM);
+        sprintf(cmd, "iptables -t raw -I PREROUTING -p tcp --sport %d --tcp-flags SYN,ACK SYN,ACK -j NFQUEUE --queue-num %d", opt_tor_port, NF_QUEUE_NUM);
         system(cmd);
         // intercept outgoing ACK
         //sprintf(cmd, "iptables -t mangle -A POSTROUTING -p tcp --dport %d --tcp-flags SYN,ACK,RST ACK -m mark ! --mark %d -m length --length 0:80 -j NFQUEUE --queue-num %d", opt_tor_port, MARK, NF_QUEUE_NUM);
