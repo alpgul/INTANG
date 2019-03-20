@@ -9,8 +9,6 @@ Type=forking
 ExecStart=/bin/bash INTANG.sh start
 ExecStop=/bin/bash INTANG.sh stop
 KillMode=process
-Restart=always
-RestartSec=1
 
 [Install]
 WantedBy=multi-user.target
