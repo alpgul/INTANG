@@ -4,9 +4,8 @@ Description=INTANG
 After=multi-user.target
 
 [Service]
-WorkingDirectory=/opt/INTANG/
 Type=forking
-ExecStart=/bin/bash INTANG.sh start
+ExecStart=/opt/INTANG/bin/intangd 10
 ExecStop=/bin/bash INTANG.sh stop
 KillMode=process
 
