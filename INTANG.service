@@ -6,8 +6,7 @@ After=multi-user.target
 [Service]
 Type=forking
 ExecStart=/opt/INTANG/bin/intangd 10
-ExecStop=/bin/bash INTANG.sh stop
-KillMode=process
+KillMode=control-group
 
 [Install]
 WantedBy=multi-user.target
